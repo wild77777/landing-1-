@@ -192,28 +192,46 @@
             </div>
         </section>
 
-        <!-- Testimonials Section -->
-        <section class="py-32 bg-black/30">
+        <!-- Testimonials Section (Social Proof) -->
+        <section class="py-32 bg-black/30 overflow-hidden">
             <div class="container mx-auto px-4">
-                <div class="text-center mb-24" data-aos="fade-up">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <div class="text-green-500 font-bold uppercase tracking-[0.4em] text-xs mb-6">Social Proof</div>
                     <h3 class="text-5xl font-black tracking-tighter uppercase mb-8">Comunidad Wild</h3>
                     <div class="flex justify-center space-x-2 mb-6 text-green-500 text-sm">
                         <i class="fas fa-star" v-for="i in 5" :key="i"></i>
                     </div>
                 </div>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div v-for="(testimonial, index) in testimonials" :key="testimonial.name" class="p-10 rounded-[40px] glass-card" data-aos="fade-up" :data-aos-delay="100 * index">
-                        <div class="flex items-center mb-8">
-                            <div class="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center font-black text-green-500 mr-4">
+
+                <div class="max-w-4xl mx-auto relative px-4 h-[300px] flex items-center justify-center">
+                    <transition-group name="testimonial-fade">
+                        <div v-for="(testimonial, index) in testimonials"
+                             :key="testimonial.name"
+                             v-show="currentTestimonial === index"
+                             class="absolute w-full p-8 md:p-12 rounded-[40px] glass-card text-center flex flex-col items-center">
+
+                            <div class="w-20 h-20 bg-green-600/10 border border-green-500/20 rounded-full flex items-center justify-center font-black text-green-500 text-2xl mb-8">
                                 {{ testimonial.name.charAt(0) }}
                             </div>
+
+                            <p class="text-xl md:text-2xl text-gray-300 font-light italic leading-relaxed mb-8">
+                                "{{ testimonial.text }}"
+                            </p>
+
                             <div>
-                                <div class="font-black uppercase tracking-widest text-sm">{{ testimonial.name }}</div>
-                                <div class="text-[10px] text-gray-500 uppercase tracking-[0.2em] mt-1">{{ testimonial.location }}</div>
+                                <div class="font-black uppercase tracking-[0.2em] text-sm text-white">{{ testimonial.name }}</div>
+                                <div class="text-xs text-green-500 uppercase tracking-[0.3em] mt-2 font-bold">{{ testimonial.location }}</div>
                             </div>
                         </div>
-                        <p class="text-gray-400 font-light italic leading-relaxed">"{{ testimonial.text }}"</p>
-                    </div>
+                    </transition-group>
+                </div>
+
+                <!-- Dots indicator -->
+                <div class="flex justify-center space-x-3 mt-12">
+                    <button v-for="(t, i) in testimonials" :key="'dot-'+i"
+                            @click="currentTestimonial = i"
+                            :class="currentTestimonial === i ? 'bg-green-500 w-8' : 'bg-white/10 w-2'"
+                            class="h-2 rounded-full transition-all duration-500 focus:outline-none"></button>
                 </div>
             </div>
         </section>
@@ -272,6 +290,18 @@
         .fade-enter-from, .fade-leave-to {
             opacity: 0;
         }
+
+        .testimonial-fade-enter-active, .testimonial-fade-leave-active {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .testimonial-fade-enter-from {
+            opacity: 0;
+            transform: translateX(50px) scale(0.9);
+        }
+        .testimonial-fade-leave-to {
+            opacity: 0;
+            transform: translateX(-50px) scale(0.9);
+        }
     </style>
 
     <script>
@@ -281,6 +311,7 @@
             data() {
                 return {
                     isMenuOpen: false,
+                    currentTestimonial: 0,
                     brand: {
                         name: 'House Wild',
                         whatsappUrl: 'https://wa.me/593985932083',
@@ -381,9 +412,11 @@
                         }
                     ],
                     testimonials: [
+                        { name: 'Juan de Manta', location: 'Manta', text: 'Me gusta la calidad 10 de 10. Respondieron súper rápido y el envío fue puntual.' },
                         { name: 'Carlos M.', location: 'Quito', text: 'La calidad es impresionante. Los pedí y me llegaron al día siguiente. Súper cómodos.' },
                         { name: 'Andrea P.', location: 'Guayaquil', text: 'Me encantan los diseños, son súper originales. En persona se ven incluso mejor que en fotos.' },
-                        { name: 'Juan S.', location: 'Cuenca', text: 'Excelente atención por WhatsApp. Me ayudaron con la talla y me quedaron perfectos.' }
+                        { name: 'Mateo R.', location: 'Ambato', text: 'El diseño táctico es justo lo que buscaba. Muy resistentes para el uso diario.' },
+                        { name: 'Lucía V.', location: 'Loja', text: 'Increíble experiencia de compra. La atención por WhatsApp fue muy personalizada.' }
                     ]
                 }
             },
@@ -393,6 +426,11 @@
                     once: true,
                     offset: 100
                 });
+
+                // Auto-rotate testimonials every 3 seconds
+                setInterval(() => {
+                    this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+                }, 3000);
             }
         }).mount('#app')
     </script>
