@@ -6,6 +6,8 @@
     <title>House Wild - Calzado Exclusivo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         body {
@@ -15,134 +17,240 @@
         .hero-gradient {
             background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
         }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm z-50">
-        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
-            <h1 class="text-3xl font-black tracking-tighter text-black uppercase">House Wild</h1>
-            <a href="https://wa.me/593985932083" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold flex items-center transition duration-300 shadow-lg shadow-green-200">
-                <i class="fab fa-whatsapp mr-2"></i> WhatsApp
-            </a>
-        </div>
-    </header>
+    <div id="app">
+        <!-- Header renders here -->
+        <header class="bg-white/80 backdrop-blur-md sticky top-0 shadow-sm z-50">
+            <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+                <h1 class="text-3xl font-black tracking-tighter text-black uppercase">{{ brand.name }}</h1>
+                <a :href="brand.whatsappUrl" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold flex items-center transition duration-300 shadow-lg shadow-green-200">
+                    <i class="fab fa-whatsapp mr-2"></i> WhatsApp
+                </a>
+            </div>
+        </header>
 
-    <!-- Hero Section / Top Seller -->
-    <section class="hero-gradient overflow-hidden">
-        <div class="container mx-auto px-4 py-16 lg:py-24">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="order-2 lg:order-1">
-                    <div class="inline-block bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest mb-6">
-                        Best Seller 2024
+        <!-- Hero Section -->
+        <section class="hero-gradient overflow-hidden relative">
+            <div class="absolute top-20 right-10 w-32 h-32 opacity-20 hidden lg:block">
+                <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" loop autoplay></lottie-player>
+            </div>
+
+            <div class="container mx-auto px-4 py-16 lg:py-24">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div class="order-2 lg:order-1" data-aos="fade-right">
+                        <div class="flex gap-3 mb-6">
+                            <div class="inline-flex items-center bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest">
+                                <span class="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-ping"></span>
+                                {{ hero.badge }}
+                            </div>
+                            <div class="inline-flex items-center bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest">
+                                <i class="fas fa-fire mr-2"></i> Stock Limitado
+                            </div>
+                        </div>
+                        <h2 class="text-5xl lg:text-7xl font-extrabold mb-8 leading-tight" v-html="hero.title"></h2>
+                        <p class="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed">{{ hero.description }}</p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a :href="brand.whatsappUrl" class="bg-black text-white px-10 py-5 rounded-xl font-bold text-center hover:bg-gray-800 transition duration-300 flex items-center justify-center text-lg shadow-2xl">
+                                <i class="fab fa-whatsapp mr-3 text-2xl"></i> {{ hero.ctaText }}
+                            </a>
+                        </div>
+                        <div class="mt-10 grid grid-cols-2 gap-6 pt-10 border-t border-gray-200">
+                            <div v-for="item in hero.features" :key="item.text" class="flex items-center">
+                                <div class="w-10 h-10 bg-white shadow-md rounded-full flex items-center justify-center mr-3">
+                                    <i :class="item.icon" class="text-green-600"></i>
+                                </div>
+                                <span class="font-medium text-gray-700">{{ item.text }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="text-5xl lg:text-7xl font-extrabold mb-8 leading-tight">
-                        Eleva tu estilo, <br><span class="text-green-600">libera tu instinto.</span>
-                    </h2>
-                    <p class="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed">
-                        Descubre el calzado que está revolucionando las calles de Ecuador. Diseño premium, confort inigualable y la resistencia que solo House Wild te ofrece.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="https://wa.me/593985932083" class="bg-black text-white px-10 py-5 rounded-xl font-bold text-center hover:bg-gray-800 transition duration-300 flex items-center justify-center text-lg shadow-2xl">
-                            <i class="fab fa-whatsapp mr-3 text-2xl"></i> Comprar por WhatsApp
+                    <div class="order-1 lg:order-2 relative" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="relative z-10 group">
+                            <div class="absolute -inset-4 bg-green-400 rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+                            <img :src="hero.image" :alt="hero.imageAlt" class="relative w-full rounded-3xl shadow-2xl object-cover h-[500px] lg:h-[700px] transform hover:scale-[1.02] transition duration-500">
+                            <div class="absolute -top-6 -right-6 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl transform rotate-12 uppercase tracking-tighter text-xl">
+                                {{ hero.floatingBadge }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-12 bg-white border-y border-gray-100">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div v-for="stat in stats" :key="stat.label" class="text-center" data-aos="fade-up">
+                        <div class="text-4xl font-black text-black mb-2">{{ stat.value }}</div>
+                        <div class="text-gray-500 font-medium uppercase text-sm tracking-widest">{{ stat.label }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="detalles" class="bg-gray-50 py-24">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center mb-20" data-aos="fade-up">
+                    <h3 class="text-4xl font-bold mb-6">{{ featuresContent.title }}</h3>
+                    <p class="text-gray-500 text-lg">{{ featuresContent.subtitle }}</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-12">
+                    <div v-for="(feature, index) in features" :key="feature.title" class="bg-white p-10 rounded-3xl border border-gray-100 hover:shadow-xl transition duration-300" data-aos="fade-up" :data-aos-delay="100 * (index + 1)">
+                        <div class="w-16 h-16 bg-green-50 shadow-lg rounded-2xl flex items-center justify-center mb-8 text-3xl text-green-600">
+                            <i :class="feature.icon"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold mb-4">{{ feature.title }}</h4>
+                        <p class="text-gray-600 leading-relaxed">{{ feature.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="bg-white py-24">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center mb-20" data-aos="fade-up">
+                    <h3 class="text-4xl font-bold mb-6">Lo que dicen nuestros clientes</h3>
+                    <div class="flex justify-center space-x-1 mb-4 text-yellow-400">
+                        <i class="fas fa-star" v-for="i in 5" :key="i"></i>
+                    </div>
+                    <p class="text-gray-500 text-lg">La satisfacción de nuestra comunidad es nuestra mayor garantía.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div v-for="(testimonial, index) in testimonials" :key="testimonial.name" class="p-8 rounded-3xl border border-gray-100 bg-gray-50/50" data-aos="fade-up" :data-aos-delay="100 * index">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center font-bold text-green-700 mr-4">
+                                {{ testimonial.name.charAt(0) }}
+                            </div>
+                            <div>
+                                <div class="font-bold">{{ testimonial.name }}</div>
+                                <div class="text-xs text-gray-400 uppercase tracking-widest">{{ testimonial.location }}</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 italic">"{{ testimonial.text }}"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-black py-24 overflow-hidden relative">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            </div>
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="flex flex-col items-center text-center" data-aos="zoom-out">
+                    <h2 class="text-white text-5xl lg:text-8xl font-black mb-12 opacity-10 tracking-widest uppercase">{{ brand.name }}</h2>
+                    <div class="max-w-2xl">
+                        <h3 class="text-white text-3xl lg:text-5xl font-bold mb-8 italic">¿LISTO PARA EL SIGUIENTE NIVEL?</h3>
+                        <p class="text-gray-400 text-xl mb-12">Únete a miles de personas en Ecuador que ya confían en House Wild para sus aventuras diarias.</p>
+                        <a :href="brand.whatsappUrl" class="bg-green-500 text-white px-12 py-6 rounded-full font-bold text-2xl hover:bg-green-600 transition duration-300 inline-block shadow-2xl shadow-green-900/20">
+                            Pide tu catálogo por WhatsApp
                         </a>
                     </div>
-                    <div class="mt-10 grid grid-cols-2 gap-6 pt-10 border-t border-gray-200">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-white shadow-md rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-truck text-green-600"></i>
-                            </div>
-                            <span class="font-medium text-gray-700">Envíos a nivel nacional</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-white shadow-md rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-undo text-green-600"></i>
-                            </div>
-                            <span class="font-medium text-gray-700">Cambios garantizados</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="order-1 lg:order-2 relative">
-                    <div class="relative z-10 group">
-                        <div class="absolute -inset-4 bg-green-400 rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Top Seller House Wild" class="relative w-full rounded-3xl shadow-2xl object-cover h-[500px] lg:h-[700px] transform hover:scale-[1.02] transition duration-500">
-                        <div class="absolute -top-6 -right-6 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl transform rotate-12 uppercase tracking-tighter text-xl">
-                            ¡Top Seller!
-                        </div>
+                    <div class="mt-20 flex space-x-12">
+                        <a v-for="social in brand.socials" :key="social.icon" :href="social.url" target="_blank" class="text-white hover:text-green-500 text-4xl transition transform hover:scale-110">
+                            <i :class="social.icon"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Features Section -->
-    <section id="detalles" class="bg-white py-24">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto text-center mb-20">
-                <h3 class="text-4xl font-bold mb-6">¿Qué hace a House Wild diferente?</h3>
-                <p class="text-gray-500 text-lg">No es solo calzado, es una declaración de intenciones. Creado para quienes no se detienen.</p>
+        <!-- Footer -->
+        <footer class="bg-white py-12 border-t border-gray-100">
+            <div class="container mx-auto px-4 text-center">
+                <p class="text-gray-400 font-medium">© 2025 {{ brand.name }} Ecuador. Todos los derechos reservados.</p>
+                <p class="text-gray-300 text-xs mt-2">Síguenos en nuestras redes sociales para lanzamientos exclusivos.</p>
             </div>
-            <div class="grid md:grid-cols-3 gap-12">
-                <div class="bg-gray-50 p-10 rounded-3xl border border-gray-100 hover:shadow-xl transition duration-300">
-                    <div class="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mb-8 text-3xl text-green-600">
-                        <i class="fas fa-feather-alt"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4">Ligereza Extrema</h4>
-                    <p class="text-gray-600 leading-relaxed">Sentirás que caminas sobre las nubes gracias a nuestra tecnología de materiales ultra livianos.</p>
-                </div>
-                <div class="bg-gray-50 p-10 rounded-3xl border border-gray-100 hover:shadow-xl transition duration-300">
-                    <div class="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mb-8 text-3xl text-green-600">
-                        <i class="fas fa-gem"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4">Calidad Superior</h4>
-                    <p class="text-gray-600 leading-relaxed">Acabados hechos a mano y materiales de alta durabilidad para resistir tu ritmo diario.</p>
-                </div>
-                <div class="bg-gray-50 p-10 rounded-3xl border border-gray-100 hover:shadow-xl transition duration-300">
-                    <div class="w-16 h-16 bg-white shadow-lg rounded-2xl flex items-center justify-center mb-8 text-3xl text-green-600">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4">Diseño Audaz</h4>
-                    <p class="text-gray-600 leading-relaxed">Líneas agresivas y colores vibrantes que te harán destacar en cualquier lugar.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </footer>
+    </div>
 
-    <!-- Social Proof / Brand Section -->
-    <section class="bg-black py-24 overflow-hidden">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col items-center text-center">
-                <h2 class="text-white text-5xl lg:text-8xl font-black mb-12 opacity-10 tracking-widest uppercase">HOUSE WILD</h2>
-                <div class="max-w-2xl">
-                    <h3 class="text-white text-3xl lg:text-5xl font-bold mb-8 italic">¿LISTO PARA EL SIGUIENTE NIVEL?</h3>
-                    <p class="text-gray-400 text-xl mb-12">Únete a miles de personas en Ecuador que ya confían en House Wild para sus aventuras diarias.</p>
-                    <a href="https://wa.me/593985932083" class="bg-green-500 text-white px-12 py-6 rounded-full font-bold text-2xl hover:bg-green-600 transition duration-300 inline-block shadow-2xl shadow-green-900/20">
-                        Pide tu catálogo por WhatsApp
-                    </a>
-                </div>
-                <div class="mt-20 flex space-x-12">
-                    <a href="https://www.instagram.com/housewildec/" target="_blank" class="text-white hover:text-green-500 text-4xl transition transform hover:scale-110">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="text-white hover:text-green-500 text-4xl transition transform hover:scale-110">
-                        <i class="fab fa-facebook"></i>
-                    </a>
-                    <a href="#" class="text-white hover:text-green-500 text-4xl transition transform hover:scale-110">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Vue.js for JSON-driven content -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-    <!-- Footer -->
-    <footer class="bg-white py-12 border-t border-gray-100">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-400 font-medium">© 2025 House Wild Ecuador. Todos los derechos reservados.</p>
-            <p class="text-gray-300 text-xs mt-2">Síguenos en nuestras redes sociales para lanzamientos exclusivos.</p>
-        </div>
-    </footer>
+    <script>
+        const { createApp } = Vue
 
+        createApp({
+            data() {
+                return {
+                    brand: {
+                        name: 'House Wild',
+                        whatsappUrl: 'https://wa.me/593985932083',
+                        socials: [
+                            { icon: 'fab fa-instagram', url: 'https://www.instagram.com/housewildec/' },
+                            { icon: 'fab fa-facebook', url: '#' },
+                            { icon: 'fab fa-tiktok', url: '#' }
+                        ]
+                    },
+                    hero: {
+                        badge: 'Exclusividad en cada paso',
+                        title: 'Domina las calles con <br><span class="text-green-600">House Wild Ecuador</span>',
+                        description: 'Calzado diseñado para quienes no conocen límites. Combina el estilo urbano con la máxima durabilidad. Sé parte de la comunidad que marca tendencia.',
+                        ctaText: 'Pedir por WhatsApp Ahora',
+                        image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                        imageAlt: 'Sneakers House Wild Top Seller',
+                        floatingBadge: 'Lo más vendido',
+                        features: [
+                            { icon: 'fas fa-shipping-fast', text: 'Envíos rápidos a todo Ecuador' },
+                            { icon: 'fas fa-check-circle', text: 'Calidad 100% Garantizada' }
+                        ]
+                    },
+                    stats: [
+                        { value: '10k+', label: 'Seguidores' },
+                        { value: '5000+', label: 'Clientes Felices' },
+                        { value: '24/7', label: 'Soporte' },
+                        { value: '24h', label: 'Envío promedio' }
+                    ],
+                    featuresContent: {
+                        title: '¿Por qué elegir House Wild?',
+                        subtitle: 'Fusionamos diseño de vanguardia con materiales de alta resistencia para el estilo de vida ecuatoriano.'
+                    },
+                    features: [
+                        {
+                            icon: 'fas fa-medal',
+                            title: 'Acabados Premium',
+                            description: 'Cada par es revisado minuciosamente para garantizar que recibas solo lo mejor en materiales y costuras.'
+                        },
+                        {
+                            icon: 'fas fa-walking',
+                            title: 'Confort Superior',
+                            description: 'Plantillas ergonómicas diseñadas para brindarte comodidad durante todo el día, sin importar tu actividad.'
+                        },
+                        {
+                            icon: 'fas fa-rocket',
+                            title: 'Tendencia Global',
+                            description: 'Diseños inspirados en las últimas tendencias internacionales, adaptados al espíritu salvaje de nuestra marca.'
+                        }
+                    ],
+                    testimonials: [
+                        { name: 'Carlos M.', location: 'Quito', text: 'La calidad es impresionante. Los pedí y me llegaron al día siguiente. Súper cómodos.' },
+                        { name: 'Andrea P.', location: 'Guayaquil', text: 'Me encantan los diseños, son súper originales. En persona se ven incluso mejor que en fotos.' },
+                        { name: 'Juan S.', location: 'Cuenca', text: 'Excelente atención por WhatsApp. Me ayudaron con la talla y me quedaron perfectos.' }
+                    ]
+                }
+            },
+            mounted() {
+                AOS.init({
+                    duration: 1000,
+                    once: true,
+                    offset: 100
+                });
+            }
+        }).mount('#app')
+    </script>
 </body>
 </html>
