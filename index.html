@@ -7,79 +7,153 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
             scroll-behavior: smooth;
         }
+        .bg-stealth {
+            background-color: #0a0a0a;
+        }
         .hero-gradient {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .stat-card {
             transition: all 0.3s ease;
         }
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+<body class="bg-stealth text-white overflow-x-hidden">
 
     <div id="app">
         <!-- Header renders here -->
-        <header class="bg-white/80 backdrop-blur-md sticky top-0 shadow-sm z-50">
+        <header class="bg-black/80 backdrop-blur-md sticky top-0 border-b border-white/5 z-50">
             <div class="container mx-auto px-4 py-6 flex justify-between items-center">
-                <h1 class="text-3xl font-black tracking-tighter text-black uppercase">{{ brand.name }}</h1>
-                <a :href="brand.whatsappUrl" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold flex items-center transition duration-300 shadow-lg shadow-green-200">
-                    <i class="fab fa-whatsapp mr-2"></i> WhatsApp
-                </a>
+                <h1 class="text-3xl font-black tracking-tighter text-white uppercase">{{ brand.name }}</h1>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-8 font-bold uppercase text-xs tracking-[0.3em] text-gray-400">
+                    <a href="#" class="hover:text-green-500 transition">Inicio</a>
+                    <a href="#catalogo" class="hover:text-green-500 transition">Catálogo</a>
+                    <a href="#detalles" class="hover:text-green-500 transition">Detalles</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <a :href="brand.whatsappUrl" class="hidden sm:flex bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-bold items-center transition duration-300 shadow-lg shadow-green-900/20">
+                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="isMenuOpen = !isMenuOpen" class="md:hidden text-2xl text-white focus:outline-none">
+                        <i :class="isMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+                    </button>
+                </div>
             </div>
+
+            <!-- Mobile Nav -->
+            <transition name="fade">
+                <nav v-if="isMenuOpen" class="md:hidden bg-black border-t border-white/5 p-6 flex flex-col space-y-4 font-bold uppercase text-center tracking-widest text-white">
+                    <a href="#" @click="isMenuOpen = false" class="py-2 hover:text-green-600 transition">Inicio</a>
+                    <a href="#catalogo" @click="isMenuOpen = false" class="py-2 hover:text-green-600 transition">Catálogo</a>
+                    <a href="#detalles" @click="isMenuOpen = false" class="py-2 hover:text-green-600 transition">Detalles</a>
+                    <a :href="brand.whatsappUrl" class="bg-green-500 text-white py-4 rounded-xl flex items-center justify-center">
+                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp
+                    </a>
+                </nav>
+            </transition>
         </header>
 
         <!-- Hero Section -->
-        <section class="hero-gradient overflow-hidden relative">
-            <div class="absolute top-20 right-10 w-32 h-32 opacity-20 hidden lg:block">
-                <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" loop autoplay></lottie-player>
-            </div>
-
-            <div class="container mx-auto px-4 py-16 lg:py-24">
+        <section class="hero-gradient overflow-hidden relative pt-12">
+            <div class="container mx-auto px-4 py-16 lg:py-32">
                 <div class="grid lg:grid-cols-2 gap-16 items-center">
                     <div class="order-2 lg:order-1" data-aos="fade-right">
-                        <div class="flex gap-3 mb-6">
-                            <div class="inline-flex items-center bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest">
-                                <span class="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-ping"></span>
+                        <div class="flex flex-wrap gap-3 mb-8">
+                            <div class="inline-flex items-center bg-green-900/30 text-green-400 border border-green-500/20 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
+                                <span class="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
                                 {{ hero.badge }}
                             </div>
-                            <div class="inline-flex items-center bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest">
-                                <i class="fas fa-fire mr-2"></i> Stock Limitado
+                            <div class="inline-flex items-center bg-white/5 text-gray-300 border border-white/10 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
+                                <i class="fas fa-shield-alt mr-2 text-green-500"></i> Diseño Táctico
                             </div>
                         </div>
-                        <h2 class="text-5xl lg:text-7xl font-extrabold mb-8 leading-tight" v-html="hero.title"></h2>
-                        <p class="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed">{{ hero.description }}</p>
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <a :href="brand.whatsappUrl" class="bg-black text-white px-10 py-5 rounded-xl font-bold text-center hover:bg-gray-800 transition duration-300 flex items-center justify-center text-lg shadow-2xl">
+                        <h2 class="text-6xl lg:text-8xl font-black mb-8 leading-none tracking-tighter" v-html="hero.title"></h2>
+                        <p class="text-xl text-gray-400 mb-12 max-w-lg leading-relaxed font-light">{{ hero.description }}</p>
+                        <div class="flex flex-col sm:flex-row gap-6">
+                            <a href="#catalogo" class="bg-white text-black px-12 py-6 rounded-full font-black text-center hover:bg-green-500 hover:text-white transition duration-500 flex items-center justify-center text-lg uppercase tracking-widest shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                                Explorar
+                            </a>
+                            <a :href="brand.whatsappUrl" class="border border-white/20 text-white px-12 py-6 rounded-full font-bold text-center hover:bg-white hover:text-black transition duration-500 flex items-center justify-center text-lg uppercase tracking-widest backdrop-blur-sm">
                                 <i class="fab fa-whatsapp mr-3 text-2xl"></i> {{ hero.ctaText }}
                             </a>
                         </div>
-                        <div class="mt-10 grid grid-cols-2 gap-6 pt-10 border-t border-gray-200">
+                        <div class="mt-16 grid grid-cols-2 gap-8 pt-10 border-t border-white/5">
                             <div v-for="item in hero.features" :key="item.text" class="flex items-center">
-                                <div class="w-10 h-10 bg-white shadow-md rounded-full flex items-center justify-center mr-3">
-                                    <i :class="item.icon" class="text-green-600"></i>
+                                <div class="w-12 h-12 glass-card rounded-2xl flex items-center justify-center mr-4">
+                                    <i :class="item.icon" class="text-green-500"></i>
                                 </div>
-                                <span class="font-medium text-gray-700">{{ item.text }}</span>
+                                <span class="font-bold text-gray-300 uppercase text-xs tracking-widest">{{ item.text }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="order-1 lg:order-2 relative" data-aos="zoom-in" data-aos-delay="200">
                         <div class="relative z-10 group">
-                            <div class="absolute -inset-4 bg-green-400 rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-                            <img :src="hero.image" :alt="hero.imageAlt" class="relative w-full rounded-3xl shadow-2xl object-cover h-[500px] lg:h-[700px] transform hover:scale-[1.02] transition duration-500">
-                            <div class="absolute -top-6 -right-6 bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black shadow-2xl transform rotate-12 uppercase tracking-tighter text-xl">
-                                {{ hero.floatingBadge }}
+                            <div class="absolute -inset-20 bg-green-500 rounded-full blur-[120px] opacity-10"></div>
+                            <img :src="hero.image" :alt="hero.imageAlt" class="relative w-full rounded-[40px] shadow-2xl object-cover h-[500px] lg:h-[750px] transform transition duration-700 group-hover:scale-[1.03]">
+                            <div class="absolute -bottom-10 -left-10 glass-card px-10 py-6 rounded-[30px] shadow-2xl transform -rotate-3">
+                                <div class="text-green-500 font-black text-4xl mb-1">9.8/10</div>
+                                <div class="text-gray-400 text-xs font-bold uppercase tracking-widest">User Rating</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalog Section -->
+        <section id="catalogo" class="py-32 bg-stealth">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8" data-aos="fade-up">
+                    <div class="max-w-xl">
+                        <div class="inline-block text-green-500 font-bold uppercase tracking-[0.4em] text-xs mb-6">
+                            The Stealth Series
+                        </div>
+                        <h3 class="text-5xl lg:text-7xl font-black tracking-tighter uppercase mb-8">Nuestros<br>Top Sellers</h3>
+                        <p class="text-gray-400 text-xl font-light leading-relaxed">Equipamiento diseñado para la jungla de asfalto. Resistencia sin comprometer el estilo.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="(product, index) in products" :key="product.id"
+                         class="group relative glass-card rounded-[40px] overflow-hidden transition-all duration-700 hover:border-green-500/30"
+                         data-aos="fade-up" :data-aos-delay="index * 100">
+                        <div class="relative h-[450px] overflow-hidden">
+                            <img :src="product.image" :alt="product.name" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 group-hover:rotate-2">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
+                            <div class="absolute top-6 right-6 glass-card px-5 py-2 rounded-2xl font-black text-xl tracking-tighter">
+                                ${{ product.price }}
+                            </div>
+                            <div v-if="product.isNew" class="absolute top-6 left-6 bg-green-600 text-white px-5 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+                                Drop 2025
+                            </div>
+                        </div>
+                        <div class="p-10">
+                            <h4 class="text-3xl font-black mb-4 uppercase tracking-tighter">{{ product.name }}</h4>
+                            <p class="text-gray-400 mb-8 text-sm font-light leading-relaxed h-12 line-clamp-2">{{ product.description }}</p>
+                            <a :href="brand.whatsappUrl + '?text=Hola, estoy interesado en el modelo ' + product.name"
+                               class="flex items-center justify-center w-full bg-white text-black py-5 rounded-2xl font-black hover:bg-green-600 hover:text-white transition duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] uppercase tracking-widest text-xs">
+                                <i class="fab fa-whatsapp mr-3 text-lg"></i> Comprar ahora
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -87,58 +161,58 @@
         </section>
 
         <!-- Stats Section -->
-        <section class="py-12 bg-white border-y border-gray-100">
+        <section class="py-24 border-y border-white/5 bg-black/50">
             <div class="container mx-auto px-4">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
                     <div v-for="stat in stats" :key="stat.label" class="text-center" data-aos="fade-up">
-                        <div class="text-4xl font-black text-black mb-2">{{ stat.value }}</div>
-                        <div class="text-gray-500 font-medium uppercase text-sm tracking-widest">{{ stat.label }}</div>
+                        <div class="text-5xl lg:text-6xl font-black text-white mb-4 tracking-tighter">{{ stat.value }}</div>
+                        <div class="text-green-500 font-bold uppercase text-[10px] tracking-[0.4em]">{{ stat.label }}</div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Features Section -->
-        <section id="detalles" class="bg-gray-50 py-24">
+        <section id="detalles" class="py-32">
             <div class="container mx-auto px-4">
-                <div class="max-w-3xl mx-auto text-center mb-20" data-aos="fade-up">
-                    <h3 class="text-4xl font-bold mb-6">{{ featuresContent.title }}</h3>
-                    <p class="text-gray-500 text-lg">{{ featuresContent.subtitle }}</p>
+                <div class="max-w-3xl mb-24" data-aos="fade-up">
+                    <div class="text-green-500 font-bold uppercase tracking-[0.4em] text-xs mb-6">Especificaciones</div>
+                    <h3 class="text-5xl font-black tracking-tighter uppercase mb-8">{{ featuresContent.title }}</h3>
+                    <p class="text-gray-400 text-xl font-light">{{ featuresContent.subtitle }}</p>
                 </div>
-                <div class="grid md:grid-cols-3 gap-12">
-                    <div v-for="(feature, index) in features" :key="feature.title" class="bg-white p-10 rounded-3xl border border-gray-100 hover:shadow-xl transition duration-300" data-aos="fade-up" :data-aos-delay="100 * (index + 1)">
-                        <div class="w-16 h-16 bg-green-50 shadow-lg rounded-2xl flex items-center justify-center mb-8 text-3xl text-green-600">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div v-for="(feature, index) in features" :key="feature.title" class="glass-card p-12 rounded-[40px] transition duration-500 hover:bg-white/5" data-aos="fade-up" :data-aos-delay="100 * (index + 1)">
+                        <div class="w-16 h-16 bg-green-600/10 border border-green-500/20 rounded-2xl flex items-center justify-center mb-10 text-3xl text-green-500">
                             <i :class="feature.icon"></i>
                         </div>
-                        <h4 class="text-2xl font-bold mb-4">{{ feature.title }}</h4>
-                        <p class="text-gray-600 leading-relaxed">{{ feature.description }}</p>
+                        <h4 class="text-2xl font-black mb-6 uppercase tracking-tighter">{{ feature.title }}</h4>
+                        <p class="text-gray-400 leading-relaxed font-light">{{ feature.description }}</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Testimonials Section -->
-        <section class="bg-white py-24">
+        <section class="py-32 bg-black/30">
             <div class="container mx-auto px-4">
-                <div class="max-w-3xl mx-auto text-center mb-20" data-aos="fade-up">
-                    <h3 class="text-4xl font-bold mb-6">Lo que dicen nuestros clientes</h3>
-                    <div class="flex justify-center space-x-1 mb-4 text-yellow-400">
+                <div class="text-center mb-24" data-aos="fade-up">
+                    <h3 class="text-5xl font-black tracking-tighter uppercase mb-8">Comunidad Wild</h3>
+                    <div class="flex justify-center space-x-2 mb-6 text-green-500 text-sm">
                         <i class="fas fa-star" v-for="i in 5" :key="i"></i>
                     </div>
-                    <p class="text-gray-500 text-lg">La satisfacción de nuestra comunidad es nuestra mayor garantía.</p>
                 </div>
                 <div class="grid md:grid-cols-3 gap-8">
-                    <div v-for="(testimonial, index) in testimonials" :key="testimonial.name" class="p-8 rounded-3xl border border-gray-100 bg-gray-50/50" data-aos="fade-up" :data-aos-delay="100 * index">
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center font-bold text-green-700 mr-4">
+                    <div v-for="(testimonial, index) in testimonials" :key="testimonial.name" class="p-10 rounded-[40px] glass-card" data-aos="fade-up" :data-aos-delay="100 * index">
+                        <div class="flex items-center mb-8">
+                            <div class="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center font-black text-green-500 mr-4">
                                 {{ testimonial.name.charAt(0) }}
                             </div>
                             <div>
-                                <div class="font-bold">{{ testimonial.name }}</div>
-                                <div class="text-xs text-gray-400 uppercase tracking-widest">{{ testimonial.location }}</div>
+                                <div class="font-black uppercase tracking-widest text-sm">{{ testimonial.name }}</div>
+                                <div class="text-[10px] text-gray-500 uppercase tracking-[0.2em] mt-1">{{ testimonial.location }}</div>
                             </div>
                         </div>
-                        <p class="text-gray-600 italic">"{{ testimonial.text }}"</p>
+                        <p class="text-gray-400 font-light italic leading-relaxed">"{{ testimonial.text }}"</p>
                     </div>
                 </div>
             </div>
@@ -169,10 +243,20 @@
         </section>
 
         <!-- Footer -->
-        <footer class="bg-white py-12 border-t border-gray-100">
-            <div class="container mx-auto px-4 text-center">
-                <p class="text-gray-400 font-medium">© 2025 {{ brand.name }} Ecuador. Todos los derechos reservados.</p>
-                <p class="text-gray-300 text-xs mt-2">Síguenos en nuestras redes sociales para lanzamientos exclusivos.</p>
+        <footer class="bg-black py-20 border-t border-white/5">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-12">
+                    <h1 class="text-4xl font-black tracking-tighter text-white uppercase">{{ brand.name }}</h1>
+                    <div class="flex space-x-10">
+                        <a v-for="social in brand.socials" :key="social.icon" :href="social.url" target="_blank" class="text-gray-500 hover:text-green-500 text-2xl transition">
+                            <i :class="social.icon"></i>
+                        </a>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-gray-500 font-bold uppercase text-[10px] tracking-[0.3em]">© 2025 {{ brand.name }} Ecuador</p>
+                        <p class="text-gray-700 text-[9px] mt-2 uppercase tracking-widest">Powered by Urban Performance</p>
+                    </div>
+                </div>
             </div>
         </footer>
     </div>
@@ -181,12 +265,22 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
+    <style>
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.3s ease;
+        }
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+    </style>
+
     <script>
         const { createApp } = Vue
 
         createApp({
             data() {
                 return {
+                    isMenuOpen: false,
                     brand: {
                         name: 'House Wild',
                         whatsappUrl: 'https://wa.me/593985932083',
@@ -197,18 +291,68 @@
                         ]
                     },
                     hero: {
-                        badge: 'Exclusividad en cada paso',
-                        title: 'Domina las calles con <br><span class="text-green-600">House Wild Ecuador</span>',
-                        description: 'Calzado diseñado para quienes no conocen límites. Combina el estilo urbano con la máxima durabilidad. Sé parte de la comunidad que marca tendencia.',
-                        ctaText: 'Pedir por WhatsApp Ahora',
-                        image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-                        imageAlt: 'Sneakers House Wild Top Seller',
-                        floatingBadge: 'Lo más vendido',
+                        badge: 'Top Seller 2025',
+                        title: 'WILD STEALTH <br><span class="text-green-500">BLACK EDITION</span>',
+                        description: 'La máxima expresión del calzado táctico urbano. Diseñadas para resistir cualquier terreno con un estilo imponente y sigiloso. El modelo más buscado en Ecuador ya está aquí.',
+                        ctaText: 'Comprar por WhatsApp',
+                        image: 'https://images.unsplash.com/photo-1524532700868-d7d0c30511fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                        imageAlt: 'Wild Stealth Black Showcase',
+                        floatingBadge: 'Top Seller',
                         features: [
-                            { icon: 'fas fa-shipping-fast', text: 'Envíos rápidos a todo Ecuador' },
-                            { icon: 'fas fa-check-circle', text: 'Calidad 100% Garantizada' }
+                            { icon: 'fas fa-truck', text: 'Envíos Express Ecuador' },
+                            { icon: 'fas fa-shield-alt', text: 'Materiales Reforzados' }
                         ]
                     },
+                    products: [
+                        {
+                            id: 1,
+                            name: 'Wild Stealth Black',
+                            price: 89.00,
+                            image: 'https://images.unsplash.com/photo-1524532700868-d7d0c30511fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'El modelo insignia. Construcción ultra-resistente en negro mate con suela de tracción superior.',
+                            isNew: true
+                        },
+                        {
+                            id: 2,
+                            name: 'Desert Storm',
+                            price: 95.00,
+                            image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Tonos arena para aventuras extremas. Estabilidad y confort en cada paso.',
+                            isNew: false
+                        },
+                        {
+                            id: 3,
+                            name: 'Desert Storm Boot',
+                            price: 115.00,
+                            image: 'https://images.unsplash.com/photo-1511556820780-d912e42b4980?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Corte alto para protección total. El calzado definitivo para el explorador moderno.',
+                            isNew: true
+                        },
+                        {
+                            id: 4,
+                            name: 'Jungle Commando',
+                            price: 92.00,
+                            image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Versatilidad táctica con un diseño optimizado para climas húmedos y terrenos difíciles.',
+                            isNew: false
+                        },
+                        {
+                            id: 5,
+                            name: 'Street Viper',
+                            price: 79.00,
+                            image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Velocidad y agilidad. El calzado ligero preferido por la comunidad urbana.',
+                            isNew: true
+                        },
+                        {
+                            id: 6,
+                            name: 'Urban Phantom',
+                            price: 88.00,
+                            image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Minimalismo funcional. La mezcla perfecta entre discreción y alto rendimiento.',
+                            isNew: false
+                        }
+                    ],
                     stats: [
                         { value: '10k+', label: 'Seguidores' },
                         { value: '5000+', label: 'Clientes Felices' },
