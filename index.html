@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
         body {
@@ -93,9 +94,9 @@
                             <a href="#catalogo" class="bg-white text-black px-12 py-6 rounded-full font-black text-center hover:bg-green-500 hover:text-white transition duration-500 flex items-center justify-center text-lg uppercase tracking-widest shadow-[0_0_50px_rgba(255,255,255,0.1)]">
                                 Explorar
                             </a>
-                            <a :href="brand.whatsappUrl" class="border border-white/20 text-white px-12 py-6 rounded-full font-bold text-center hover:bg-white hover:text-black transition duration-500 flex items-center justify-center text-lg uppercase tracking-widest backdrop-blur-sm">
-                                <i class="fab fa-whatsapp mr-3 text-2xl"></i> {{ hero.ctaText }}
-                            </a>
+                            <button @click="openOrderModal(products[0])" class="border border-white/20 text-white px-12 py-6 rounded-full font-bold text-center hover:bg-white hover:text-black transition duration-500 flex items-center justify-center text-lg uppercase tracking-widest backdrop-blur-sm">
+                                <i class="fas fa-shopping-bag mr-3 text-2xl"></i> {{ hero.ctaText }}
+                            </button>
                         </div>
                         <div class="mt-16 grid grid-cols-2 gap-8 pt-10 border-t border-white/5">
                             <div v-for="item in hero.features" :key="item.text" class="flex items-center">
@@ -150,10 +151,10 @@
                         <div class="p-10">
                             <h4 class="text-3xl font-black mb-4 uppercase tracking-tighter">{{ product.name }}</h4>
                             <p class="text-gray-400 mb-8 text-sm font-light leading-relaxed h-12 line-clamp-2">{{ product.description }}</p>
-                            <a :href="brand.whatsappUrl + '?text=Hola, estoy interesado en el modelo ' + product.name"
+                            <button @click="openOrderModal(product)"
                                class="flex items-center justify-center w-full bg-white text-black py-5 rounded-2xl font-black hover:bg-green-600 hover:text-white transition duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] uppercase tracking-widest text-xs">
-                                <i class="fab fa-whatsapp mr-3 text-lg"></i> Comprar ahora
-                            </a>
+                                <i class="fas fa-shopping-cart mr-3 text-lg"></i> Comprar ahora
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -278,6 +279,82 @@
             </div>
         </footer>
 
+        <!-- Order Modal -->
+        <transition name="modal-fade">
+            <div v-if="isModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" @click="closeModal"></div>
+                <div class="glass-card w-full max-w-2xl rounded-[40px] overflow-hidden relative z-10 flex flex-col md:flex-row max-h-[90vh] overflow-y-auto border-green-500/30">
+
+                    <!-- Left Side: Animation/Product Info -->
+                    <div class="md:w-1/3 bg-black/50 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-white/5">
+                        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" style="width: 150px; height: 150px;" loop autoplay></lottie-player>
+                        <h4 class="text-2xl font-black uppercase tracking-tighter text-center mt-6 text-green-500">{{ selectedProduct.name }}</h4>
+                        <div class="text-xl font-bold mt-2">${{ selectedProduct.price }}</div>
+                        <img :src="selectedProduct.image" class="w-24 h-24 object-cover rounded-2xl mt-8 shadow-2xl border border-white/10">
+                    </div>
+
+                    <!-- Right Side: Form -->
+                    <div class="md:w-2/3 p-8 lg:p-12">
+                        <div class="flex justify-between items-center mb-8">
+                            <h3 class="text-2xl font-black uppercase tracking-tighter">Finalizar Pedido</h3>
+                            <button @click="closeModal" class="text-gray-500 hover:text-white"><i class="fas fa-times"></i></button>
+                        </div>
+
+                        <form @submit.prevent="submitOrder" class="space-y-6">
+                            <!-- Size Selection -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Talla (Ecuador)</label>
+                                <div class="grid grid-cols-4 gap-3">
+                                    <button type="button" v-for="size in sizes" :key="size"
+                                            @click="form.size = size"
+                                            :class="form.size === size ? 'bg-green-500 text-black' : 'bg-white/5 text-white hover:bg-white/10'"
+                                            class="py-3 rounded-xl font-bold transition">{{ size }}</button>
+                                </div>
+                            </div>
+
+                            <!-- Payment Method -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Método de Pago</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button type="button" @click="form.payment = 'Contra Entrega'"
+                                            :class="form.payment === 'Contra Entrega' ? 'border-green-500 bg-green-500/10' : 'border-white/10 bg-white/5'"
+                                            class="border p-4 rounded-2xl text-left transition group">
+                                        <div class="font-bold text-sm group-hover:text-green-500">Contra Entrega</div>
+                                        <div class="text-[10px] text-gray-500 mt-1">Paga al recibir</div>
+                                    </button>
+                                    <button type="button" @click="form.payment = 'Pago Anticipado'"
+                                            :class="form.payment === 'Pago Anticipado' ? 'border-green-500 bg-green-500/10' : 'border-white/10 bg-white/5'"
+                                            class="border p-4 rounded-2xl text-left transition group">
+                                        <div class="font-bold text-sm group-hover:text-green-500">Pago Anticipado</div>
+                                        <div class="text-[10px] text-gray-500 mt-1">Transferencia</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Personal Data -->
+                            <div class="space-y-4">
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <input v-model="form.name" type="text" placeholder="Nombres y Apellidos" required
+                                           class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                    <input v-model="form.id" type="text" placeholder="Cédula / RUC" required
+                                           class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                </div>
+                                <input v-model="form.address" type="text" placeholder="Dirección Exacta" required
+                                       class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                <input v-model="form.phone" type="tel" placeholder="Número de WhatsApp" required
+                                       class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                            </div>
+
+                            <button type="submit"
+                                    class="w-full bg-green-500 hover:bg-green-600 text-black py-5 rounded-2xl font-black uppercase tracking-widest transition duration-300 shadow-xl shadow-green-900/20">
+                                Confirmar Pedido <i class="fab fa-whatsapp ml-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
         <!-- Live Sales Notification (FOMO) -->
         <transition name="fomo-slide">
             <div v-if="showFomo" class="fixed bottom-6 left-6 z-[60] max-w-sm w-full sm:w-auto">
@@ -339,6 +416,27 @@
             opacity: 0;
             transform: scale(0.9);
         }
+
+        /* Modal Transition */
+        .modal-fade-enter-active, .modal-fade-leave-active {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-fade-enter-from {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+        }
+        .modal-fade-leave-to {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+        }
+        .modal-fade-enter-from .glass-card {
+            transform: scale(0.8) translateY(50px);
+            opacity: 0;
+        }
+        .modal-fade-leave-to .glass-card {
+            transform: scale(0.8) translateY(50px);
+            opacity: 0;
+        }
     </style>
 
     <script>
@@ -348,6 +446,17 @@
             data() {
                 return {
                     isMenuOpen: false,
+                    isModalOpen: false,
+                    selectedProduct: null,
+                    sizes: [37, 38, 39, 40, 41, 42, 43],
+                    form: {
+                        size: 40,
+                        payment: 'Contra Entrega',
+                        name: '',
+                        id: '',
+                        address: '',
+                        phone: ''
+                    },
                     currentTestimonial: 0,
                     showFomo: false,
                     currentSale: 0,
@@ -464,6 +573,33 @@
                         { name: 'Mateo R.', location: 'Ambato', text: 'El diseño táctico es justo lo que buscaba. Muy resistentes para el uso diario.' },
                         { name: 'Lucía V.', location: 'Loja', text: 'Increíble experiencia de compra. La atención por WhatsApp fue muy personalizada.' }
                     ]
+                }
+            },
+            methods: {
+                openOrderModal(product) {
+                    this.selectedProduct = product;
+                    this.isModalOpen = true;
+                    document.body.style.overflow = 'hidden';
+                },
+                closeModal() {
+                    this.isModalOpen = false;
+                    document.body.style.overflow = 'auto';
+                },
+                submitOrder() {
+                    const message = `*NUEVO PEDIDO - HOUSE WILD*\n\n` +
+                                   `*Producto:* ${this.selectedProduct.name}\n` +
+                                   `*Precio:* $${this.selectedProduct.price}\n` +
+                                   `*Talla:* ${this.form.size}\n` +
+                                   `*Pago:* ${this.form.payment}\n\n` +
+                                   `*DATOS DEL CLIENTE*\n` +
+                                   `*Nombre:* ${this.form.name}\n` +
+                                   `*Cédula:* ${this.form.id}\n` +
+                                   `*Dirección:* ${this.form.address}\n` +
+                                   `*WhatsApp:* ${this.form.phone}`;
+
+                    const encoded = encodeURIComponent(message);
+                    window.open(`https://wa.me/593985932083?text=${encoded}`, '_blank');
+                    this.closeModal();
                 }
             },
             mounted() {
