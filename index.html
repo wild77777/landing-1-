@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Wild - Calzado Exclusivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Russo+One&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .bg-stealth {
+            background-color: #0a0a0a;
+        }
+        .font-sport {
+            font-family: 'Russo One', sans-serif;
+            letter-spacing: -0.02em;
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-stealth text-white overflow-x-hidden">
+
+    <div id="app">
+        <!-- Header renders here -->
+        <header class="bg-black/80 backdrop-blur-md sticky top-0 border-b border-white/5 z-50">
+            <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+                <h1 class="text-3xl font-sport text-white uppercase italic">{{ brand.name }}</h1>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-8 font-bold uppercase text-xs tracking-[0.3em] text-gray-400">
+                    <a href="#" class="hover:text-green-500 transition">Inicio</a>
+                    <a href="#catalogo" class="hover:text-green-500 transition">Catálogo</a>
+                    <a href="#detalles" class="hover:text-green-500 transition">Detalles</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <a :href="brand.whatsappUrl" class="hidden sm:flex bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-bold items-center transition duration-300 shadow-lg shadow-green-900/20">
+                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="isMenuOpen = !isMenuOpen" class="md:hidden text-2xl text-white focus:outline-none">
+                        <i :class="isMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Nav -->
+            <transition name="fade">
+                <nav v-if="isMenuOpen" class="md:hidden bg-black border-t border-white/5 p-6 flex flex-col space-y-4 font-bold uppercase text-center tracking-widest text-white">
+                    <a href="#" @click="isMenuOpen = false" class="py-2 hover:text-green-600 transition">Inicio</a>
+                    <a href="#catalogo" @click="isMenuOpen = false" class="py-2 hover:text-green-600 transition">Catálogo</a>
+                    <a href="#detalles" @click="isMenuOpen = false" class="py-2 hover:text-green-600 transition">Detalles</a>
+                    <a :href="brand.whatsappUrl" class="bg-green-500 text-white py-4 rounded-xl flex items-center justify-center">
+                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp
+                    </a>
+                </nav>
+            </transition>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-gradient overflow-hidden relative pt-12">
+            <div class="container mx-auto px-4 py-16 lg:py-32">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div class="order-2 lg:order-1" data-aos="fade-right">
+                        <div class="flex flex-wrap gap-3 mb-8">
+                            <div class="inline-flex items-center bg-green-900/30 text-green-400 border border-green-500/20 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
+                                <span class="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                                {{ hero.badge }}
+                            </div>
+                            <div class="inline-flex items-center bg-white/5 text-gray-300 border border-white/10 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
+                                <i class="fas fa-shield-alt mr-2 text-green-500"></i> Diseño Táctico
+                            </div>
+                        </div>
+                        <h2 class="text-6xl lg:text-8xl font-black mb-8 leading-none tracking-tighter" v-html="hero.title"></h2>
+                        <p class="text-xl text-gray-400 mb-12 max-w-lg leading-relaxed font-light">{{ hero.description }}</p>
+                        <div class="flex flex-col sm:flex-row gap-6">
+                            <a href="#catalogo" class="bg-white text-black px-12 py-6 rounded-full font-black text-center hover:bg-green-500 hover:text-white transition duration-500 flex items-center justify-center text-lg uppercase tracking-widest shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                                Explorar
+                            </a>
+                            <button @click="openOrderModal(products[0])" class="border border-white/20 text-white px-12 py-6 rounded-full font-bold text-center hover:bg-white hover:text-black transition duration-500 flex items-center justify-center text-lg uppercase tracking-widest backdrop-blur-sm">
+                                <i class="fas fa-shopping-bag mr-3 text-2xl"></i> {{ hero.ctaText }}
+                            </button>
+                        </div>
+                        <div class="mt-16 grid grid-cols-2 gap-8 pt-10 border-t border-white/5">
+                            <div v-for="item in hero.features" :key="item.text" class="flex items-center">
+                                <div class="w-12 h-12 glass-card rounded-2xl flex items-center justify-center mr-4">
+                                    <i :class="item.icon" class="text-green-500"></i>
+                                </div>
+                                <span class="font-bold text-gray-300 uppercase text-xs tracking-widest">{{ item.text }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-1 lg:order-2 relative" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="relative z-10 group">
+                            <div class="absolute -inset-20 bg-green-500 rounded-full blur-[120px] opacity-10"></div>
+                            <img :src="hero.image" :alt="hero.imageAlt" class="relative w-full rounded-[40px] shadow-2xl object-cover h-[500px] lg:h-[750px] transform transition duration-700 group-hover:scale-[1.03]">
+                            <div class="absolute -bottom-10 -left-10 glass-card px-10 py-6 rounded-[30px] shadow-2xl transform -rotate-3">
+                                <div class="text-green-500 font-black text-4xl mb-1">9.8/10</div>
+                                <div class="text-gray-400 text-xs font-bold uppercase tracking-widest">User Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalog Section -->
+        <section id="catalogo" class="py-32 bg-stealth">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8" data-aos="fade-up">
+                    <div class="max-w-xl">
+                        <div class="inline-block text-green-500 font-bold uppercase tracking-[0.4em] text-xs mb-6">
+                            The Stealth Series
+                        </div>
+                        <h3 class="text-5xl lg:text-7xl font-black tracking-tighter uppercase mb-8">Nuestros<br>Top Sellers</h3>
+                        <p class="text-gray-400 text-xl font-light leading-relaxed">Equipamiento diseñado para la jungla de asfalto. Resistencia sin comprometer el estilo.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="(product, index) in products" :key="product.id"
+                         class="group relative glass-card rounded-[40px] overflow-hidden transition-all duration-700 hover:border-green-500/30"
+                         data-aos="fade-up" :data-aos-delay="index * 100">
+                        <div class="relative h-[450px] overflow-hidden">
+                            <img :src="product.image" :alt="product.name" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 group-hover:rotate-2">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
+                            <div class="absolute top-6 right-6 glass-card px-5 py-2 rounded-2xl font-black text-xl tracking-tighter">
+                                ${{ product.price }}
+                            </div>
+                            <div v-if="product.isNew" class="absolute top-6 left-6 bg-green-600 text-white px-5 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+                                Drop 2025
+                            </div>
+                        </div>
+                        <div class="p-10">
+                            <h4 class="text-3xl font-black mb-4 uppercase tracking-tighter">{{ product.name }}</h4>
+                            <p class="text-gray-400 mb-8 text-sm font-light leading-relaxed h-12 line-clamp-2">{{ product.description }}</p>
+                            <button @click="openOrderModal(product)"
+                               class="flex items-center justify-center w-full bg-white text-black py-5 rounded-2xl font-black hover:bg-green-600 hover:text-white transition duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] uppercase tracking-widest text-xs">
+                                <i class="fas fa-shopping-cart mr-3 text-lg"></i> Comprar ahora
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-24 border-y border-white/5 bg-black/50">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+                    <div v-for="stat in stats" :key="stat.label" class="text-center" data-aos="fade-up">
+                        <div class="text-5xl lg:text-6xl font-black text-white mb-4 tracking-tighter">{{ stat.value }}</div>
+                        <div class="text-green-500 font-bold uppercase text-[10px] tracking-[0.4em]">{{ stat.label }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="detalles" class="py-32">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mb-24" data-aos="fade-up">
+                    <div class="text-green-500 font-bold uppercase tracking-[0.4em] text-xs mb-6">Especificaciones</div>
+                    <h3 class="text-5xl font-black tracking-tighter uppercase mb-8">{{ featuresContent.title }}</h3>
+                    <p class="text-gray-400 text-xl font-light">{{ featuresContent.subtitle }}</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div v-for="(feature, index) in features" :key="feature.title" class="glass-card p-12 rounded-[40px] transition duration-500 hover:bg-white/5" data-aos="fade-up" :data-aos-delay="100 * (index + 1)">
+                        <div class="w-16 h-16 bg-green-600/10 border border-green-500/20 rounded-2xl flex items-center justify-center mb-10 text-3xl text-green-500">
+                            <i :class="feature.icon"></i>
+                        </div>
+                        <h4 class="text-2xl font-black mb-6 uppercase tracking-tighter">{{ feature.title }}</h4>
+                        <p class="text-gray-400 leading-relaxed font-light">{{ feature.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section (Social Proof) -->
+        <section class="py-32 bg-black/30 overflow-hidden">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <div class="text-green-500 font-bold uppercase tracking-[0.4em] text-xs mb-6">Social Proof</div>
+                    <h3 class="text-5xl font-black tracking-tighter uppercase mb-8">Comunidad Wild</h3>
+                    <div class="flex justify-center space-x-2 mb-6 text-green-500 text-sm">
+                        <i class="fas fa-star" v-for="i in 5" :key="i"></i>
+                    </div>
+                </div>
+
+                <div class="max-w-4xl mx-auto relative px-4 h-[300px] flex items-center justify-center">
+                    <transition-group name="testimonial-fade">
+                        <div v-for="(testimonial, index) in testimonials"
+                             :key="testimonial.name"
+                             v-show="currentTestimonial === index"
+                             class="absolute w-full p-8 md:p-12 rounded-[40px] glass-card text-center flex flex-col items-center">
+
+                            <div class="w-20 h-20 bg-green-600/10 border border-green-500/20 rounded-full flex items-center justify-center font-black text-green-500 text-2xl mb-8">
+                                {{ testimonial.name.charAt(0) }}
+                            </div>
+
+                            <p class="text-xl md:text-2xl text-gray-300 font-light italic leading-relaxed mb-8">
+                                "{{ testimonial.text }}"
+                            </p>
+
+                            <div>
+                                <div class="font-black uppercase tracking-[0.2em] text-sm text-white">{{ testimonial.name }}</div>
+                                <div class="text-xs text-green-500 uppercase tracking-[0.3em] mt-2 font-bold">{{ testimonial.location }}</div>
+                            </div>
+                        </div>
+                    </transition-group>
+                </div>
+
+                <!-- Dots indicator -->
+                <div class="flex justify-center space-x-3 mt-12">
+                    <button v-for="(t, i) in testimonials" :key="'dot-'+i"
+                            @click="currentTestimonial = i"
+                            :class="currentTestimonial === i ? 'bg-green-500 w-8' : 'bg-white/10 w-2'"
+                            class="h-2 rounded-full transition-all duration-500 focus:outline-none"></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-black py-24 overflow-hidden relative">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            </div>
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="flex flex-col items-center text-center" data-aos="zoom-out">
+                    <h2 class="text-white text-5xl lg:text-8xl font-black mb-12 opacity-10 tracking-widest uppercase">{{ brand.name }}</h2>
+                    <div class="max-w-2xl">
+                        <h3 class="text-white text-3xl lg:text-5xl font-bold mb-8 italic">¿LISTO PARA EL SIGUIENTE NIVEL?</h3>
+                        <p class="text-gray-400 text-xl mb-12">Únete a miles de personas en Ecuador que ya confían en House Wild para sus aventuras diarias.</p>
+                        <a :href="brand.whatsappUrl" class="bg-green-500 text-white px-12 py-6 rounded-full font-bold text-2xl hover:bg-green-600 transition duration-300 inline-block shadow-2xl shadow-green-900/20">
+                            Pide tu catálogo por WhatsApp
+                        </a>
+                    </div>
+                    <div class="mt-20 flex space-x-12">
+                        <a v-for="social in brand.socials" :key="social.icon" :href="social.url" target="_blank" class="text-white hover:text-green-500 text-4xl transition transform hover:scale-110">
+                            <i :class="social.icon"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-black py-20 border-t border-white/5">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-12">
+                    <h1 class="text-4xl font-sport text-white uppercase italic">{{ brand.name }}</h1>
+                    <div class="flex space-x-10">
+                        <a v-for="social in brand.socials" :key="social.icon" :href="social.url" target="_blank" class="text-gray-500 hover:text-green-500 text-2xl transition">
+                            <i :class="social.icon"></i>
+                        </a>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-gray-500 font-bold uppercase text-[10px] tracking-[0.3em]">© 2025 {{ brand.name }} Ecuador</p>
+                        <p class="text-gray-700 text-[9px] mt-2 uppercase tracking-widest">Powered by Urban Performance</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Order Modal -->
+        <transition name="modal-fade">
+            <div v-if="isModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" @click="closeModal"></div>
+
+                <div class="glass-card w-full max-w-3xl rounded-[40px] overflow-hidden relative z-10 flex flex-col md:flex-row max-h-[90vh] overflow-y-auto border-green-500/30">
+
+                    <!-- Left Side: Animation/Product Info -->
+                    <div class="md:w-1/3 bg-black/50 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-white/5">
+                        <lottie-player v-if="!isOrderSuccess" src="https://assets2.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" style="width: 150px; height: 150px;" loop autoplay></lottie-player>
+                        <div v-else class="w-24 h-24 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-500 mb-6">
+                            <i class="fas fa-check-circle text-5xl animate-bounce"></i>
+                        </div>
+                        <h4 class="text-2xl font-black uppercase tracking-tighter text-center mt-4 text-green-500">{{ selectedProduct.name }}</h4>
+
+                        <div v-if="!isOrderSuccess" class="text-center mt-2">
+                            <div class="text-sm text-gray-500 uppercase tracking-widest">Precio Unitario</div>
+                            <div class="text-xl font-bold">${{ selectedProduct.price }}</div>
+
+                            <div v-if="form.quantity > 1" class="mt-4">
+                                <div class="text-xs text-gray-500 uppercase tracking-widest">Cantidad</div>
+                                <div class="text-sm font-bold text-gray-300">{{ form.quantity }} par{{ form.quantity > 1 ? 'es' : '' }}</div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-white/5">
+                                <div class="text-xs text-gray-500 uppercase tracking-widest">Total Estimado</div>
+                                <div class="text-3xl font-black text-white">${{ totalPrice }}</div>
+                            </div>
+                        </div>
+                        <div v-else class="text-center mt-2">
+                            <div class="text-xs text-green-400 font-bold uppercase tracking-widest">¡Pedido Generado!</div>
+                            <div class="text-3xl font-black text-white mt-2">${{ totalPrice }}</div>
+                        </div>
+
+                        <img :src="selectedProduct.image" class="w-24 h-24 object-cover rounded-2xl mt-8 shadow-2xl border border-white/10">
+                    </div>
+
+                    <!-- Right Side: Content Screen -->
+                    <div class="md:w-2/3 p-8 lg:p-12">
+
+                        <!-- Form Screen -->
+                        <div v-if="!isOrderSuccess">
+                            <div class="flex justify-between items-center mb-8">
+                                <h3 class="text-2xl font-black uppercase tracking-tighter">Finalizar Pedido</h3>
+                                <button @click="closeModal" class="text-gray-500 hover:text-white"><i class="fas fa-times"></i></button>
+                            </div>
+
+                            <form @submit.prevent="submitOrder" class="space-y-6">
+                                <!-- Size Selection -->
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Talla (Ecuador)</label>
+                                    <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                                        <button type="button" v-for="size in sizes" :key="size"
+                                                @click="form.size = size"
+                                                :class="form.size === size ? 'bg-green-500 text-black' : 'bg-white/5 text-white hover:bg-white/10'"
+                                                class="py-3 rounded-xl font-bold transition text-xs sm:text-sm">{{ size }}</button>
+                                    </div>
+                                </div>
+
+                                <!-- Quantity Selector -->
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Cantidad</label>
+                                    <div class="flex items-center space-x-4">
+                                        <button type="button" @click="form.quantity > 1 ? form.quantity-- : 1"
+                                                class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-lg hover:bg-white/10 transition">-</button>
+                                        <span class="text-xl font-bold w-12 text-center">{{ form.quantity }}</span>
+                                        <button type="button" @click="form.quantity < 10 ? form.quantity++ : 10"
+                                                class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-lg hover:bg-white/10 transition">+</button>
+                                        <span class="text-[10px] uppercase text-gray-500 tracking-wider font-light">(Máximo 10 pares por pedido)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Método de Pago</label>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <button type="button" @click="form.payment = 'Contra Entrega'"
+                                                :class="form.payment === 'Contra Entrega' ? 'border-green-500 bg-green-500/10' : 'border-white/10 bg-white/5'"
+                                                class="border p-4 rounded-2xl text-left transition group">
+                                            <div class="font-bold text-sm group-hover:text-green-500">Contra Entrega</div>
+                                            <div class="text-[10px] text-gray-500 mt-1">Paga al recibir</div>
+                                        </button>
+                                        <button type="button" @click="form.payment = 'Pago Anticipado'"
+                                                :class="form.payment === 'Pago Anticipado' ? 'border-green-500 bg-green-500/10' : 'border-white/10 bg-white/5'"
+                                                class="border p-4 rounded-2xl text-left transition group">
+                                            <div class="font-bold text-sm group-hover:text-green-500">Pago Anticipado</div>
+                                            <div class="text-[10px] text-gray-500 mt-1">Transferencia</div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Personal Data -->
+                                <div class="space-y-4">
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <input v-model="form.name" type="text" placeholder="Nombres y Apellidos" required
+                                                   class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                            <p v-if="errors.name" class="text-red-500 text-[10px] uppercase tracking-wider mt-1 ml-2 font-bold">{{ errors.name }}</p>
+                                        </div>
+                                        <div>
+                                            <input v-model="form.id" type="text" placeholder="Cédula / RUC (10 o 13 dígitos)" required
+                                                   class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                            <p v-if="errors.id" class="text-red-500 text-[10px] uppercase tracking-wider mt-1 ml-2 font-bold">{{ errors.id }}</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Ecuador Province & City Selectors -->
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-1 ml-2">Provincia</label>
+                                            <select v-model="form.provincia" required
+                                                    class="w-full bg-[#111111] border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition text-sm text-gray-300">
+                                                <option value="" disabled selected>Seleccione Provincia</option>
+                                                <option v-for="prov in provinces" :key="prov" :value="prov">{{ prov }}</option>
+                                            </select>
+                                            <p v-if="errors.provincia" class="text-red-500 text-[10px] uppercase tracking-wider mt-1 ml-2 font-bold">{{ errors.provincia }}</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[9px] font-bold uppercase tracking-widest text-gray-500 mb-1 ml-2">Ciudad</label>
+                                            <select v-model="form.ciudad" required :disabled="!form.provincia"
+                                                    class="w-full bg-[#111111] border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition text-sm text-gray-300 disabled:opacity-40">
+                                                <option value="" disabled selected>Seleccione Ciudad</option>
+                                                <option v-for="city in availableCities" :key="city" :value="city">{{ city }}</option>
+                                                <option value="Otra">Otra Ciudad...</option>
+                                            </select>
+                                            <p v-if="errors.ciudad" class="text-red-500 text-[10px] uppercase tracking-wider mt-1 ml-2 font-bold">{{ errors.ciudad }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div v-if="form.ciudad === 'Otra'" class="mt-2" data-aos="fade-down">
+                                        <input v-model="form.customCiudad" type="text" placeholder="Escriba su ciudad exacta" required
+                                               class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                    </div>
+
+                                    <div>
+                                        <input v-model="form.address" type="text" placeholder="Dirección Exacta (Calle Principal, Secundaria, N° de Casa/Dpto)" required
+                                               class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                        <p v-if="errors.address" class="text-red-500 text-[10px] uppercase tracking-wider mt-1 ml-2 font-bold">{{ errors.address }}</p>
+                                    </div>
+
+                                    <div>
+                                        <input v-model="form.phone" type="tel" placeholder="Número de WhatsApp (ej. 09XXXXXXXX)" required
+                                               class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl focus:outline-none focus:border-green-500 transition placeholder:text-gray-600 text-sm">
+                                        <p v-if="errors.phone" class="text-red-500 text-[10px] uppercase tracking-wider mt-1 ml-2 font-bold">{{ errors.phone }}</p>
+                                    </div>
+                                </div>
+
+                                <button type="submit"
+                                        class="w-full bg-green-500 hover:bg-green-600 text-black py-5 rounded-2xl font-black uppercase tracking-widest transition duration-300 shadow-xl shadow-green-900/20 text-sm">
+                                    Confirmar Pedido <i class="fab fa-whatsapp ml-2"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Success Screen -->
+                        <div v-else class="flex flex-col h-full justify-between" data-aos="zoom-in">
+                            <div>
+                                <div class="flex justify-between items-center mb-8">
+                                    <h3 class="text-2xl font-black uppercase tracking-tighter text-green-500">¡Pedido Generado!</h3>
+                                    <button @click="closeModal" class="text-gray-500 hover:text-white"><i class="fas fa-times"></i></button>
+                                </div>
+
+                                <div class="bg-white/5 border border-white/10 rounded-[30px] p-6 space-y-4 mb-8 text-sm">
+                                    <h4 class="font-black text-white uppercase tracking-wider text-base pb-3 border-b border-white/5">Resumen de tu Pedido</h4>
+
+                                    <div class="grid grid-cols-2 gap-y-3 gap-x-4">
+                                        <span class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Producto:</span>
+                                        <span class="text-white font-bold text-right">{{ selectedProduct.name }}</span>
+
+                                        <span class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Talla:</span>
+                                        <span class="text-white font-bold text-right">{{ form.size }}</span>
+
+                                        <span class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Cantidad:</span>
+                                        <span class="text-white font-bold text-right">{{ form.quantity }} par{{ form.quantity > 1 ? 'es' : '' }}</span>
+
+                                        <span class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Pago:</span>
+                                        <span class="text-white font-bold text-right text-green-400">{{ form.payment }}</span>
+
+                                        <span class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Cliente:</span>
+                                        <span class="text-white font-bold text-right">{{ form.name }}</span>
+
+                                        <span class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Destino:</span>
+                                        <span class="text-white font-bold text-right">{{ form.ciudad }}, {{ form.provincia }}</span>
+
+                                        <span class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Total a Pagar:</span>
+                                        <span class="text-green-500 font-black text-lg text-right">${{ totalPrice }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <p class="text-xs text-gray-400 leading-relaxed">
+                                        <i class="fas fa-info-circle text-green-500 mr-1"></i> Hemos intentado abrir WhatsApp automáticamente para que nos envíes los detalles del pedido y coordinar la entrega.
+                                    </p>
+                                    <p class="text-xs text-gray-400 leading-relaxed">
+                                        Si tu navegador bloqueó la ventana emergente, o deseas reenviar la información, por favor presiona el botón verde de abajo:
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4 mt-8">
+                                <a :href="whatsappBackupUrl" target="_blank"
+                                   class="w-full bg-green-500 hover:bg-green-600 text-black py-5 rounded-2xl font-black uppercase tracking-widest transition duration-300 shadow-xl shadow-green-900/20 text-center block text-sm">
+                                    Enviar por WhatsApp <i class="fab fa-whatsapp ml-2"></i>
+                                </a>
+                                <button type="button" @click="closeModal"
+                                        class="w-full bg-white/5 hover:bg-white/10 text-white py-4 rounded-xl font-bold uppercase tracking-wider text-xs transition border border-white/5">
+                                    Finalizar y Cerrar
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- Live Sales Notification (FOMO) -->
+        <transition name="fomo-slide">
+            <div v-if="showFomo" class="fixed bottom-6 left-6 z-[60] max-w-sm w-full sm:w-auto">
+                <div class="glass-card p-4 rounded-2xl flex items-center shadow-2xl border-green-500/20">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-black font-black text-xl">
+                            {{ recentSales[currentSale].name.charAt(0) }}
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black animate-pulse"></div>
+                    </div>
+                    <div class="ml-4 pr-8">
+                        <div class="text-[10px] text-green-500 font-bold uppercase tracking-widest mb-1">Venta Reciente</div>
+                        <div class="text-sm font-black uppercase tracking-tighter">{{ recentSales[currentSale].name }}</div>
+                        <div class="text-[11px] text-gray-400 font-light">
+                            {{ recentSales[currentSale].location }} • <span class="text-white font-bold">Ref: {{ recentSales[currentSale].ref }}</span>
+                        </div>
+                    </div>
+                    <button @click="showFomo = false" class="absolute top-4 right-4 text-gray-500 hover:text-white transition">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </transition>
+    </div>
+
+    <!-- Vue.js for JSON-driven content -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.3s ease;
+        }
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+
+        .testimonial-fade-enter-active, .testimonial-fade-leave-active {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .testimonial-fade-enter-from {
+            opacity: 0;
+            transform: translateX(50px) scale(0.9);
+        }
+        .testimonial-fade-leave-to {
+            opacity: 0;
+            transform: translateX(-50px) scale(0.9);
+        }
+
+        /* FOMO Slide Transition */
+        .fomo-slide-enter-active, .fomo-slide-leave-active {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fomo-slide-enter-from {
+            opacity: 0;
+            transform: translateX(-100px);
+        }
+        .fomo-slide-leave-to {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        /* Modal Transition */
+        .modal-fade-enter-active, .modal-fade-leave-active {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-fade-enter-from {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+        }
+        .modal-fade-leave-to {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+        }
+        .modal-fade-enter-from .glass-card {
+            transform: scale(0.8) translateY(50px);
+            opacity: 0;
+        }
+        .modal-fade-leave-to .glass-card {
+            transform: scale(0.8) translateY(50px);
+            opacity: 0;
+        }
+    </style>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    isMenuOpen: false,
+                    isModalOpen: false,
+                    isOrderSuccess: false,
+                    whatsappBackupUrl: '',
+                    selectedProduct: null,
+                    sizes: [37, 38, 39, 40, 41, 42, 43],
+                    form: {
+                        size: 40,
+                        payment: 'Contra Entrega',
+                        name: '',
+                        id: '',
+                        address: '',
+                        phone: '',
+                        quantity: 1,
+                        provincia: '',
+                        ciudad: ''
+                    },
+                    errors: {
+                        name: '',
+                        id: '',
+                        address: '',
+                        phone: '',
+                        provincia: '',
+                        ciudad: ''
+                    },
+                    provinces: [
+                        'Azuay', 'Bolívar', 'Cañar', 'Carchi', 'Chimborazo', 'Cotopaxi', 'El Oro', 'Esmeraldas', 'Galápagos', 'Guayas', 'Imbabura', 'Loja', 'Los Ríos', 'Manabí', 'Morona Santiago', 'Napo', 'Orellana', 'Pastaza', 'Pichincha', 'Santa Elena', 'Santo Domingo de los Tsáchilas', 'Sucumbíos', 'Tungurahua', 'Zamora Chinchipe'
+                    ],
+                    provinciaCities: {
+                        'Guayas': ['Guayaquil', 'Durán', 'Milagro', 'Samborondón', 'Daule', 'Naranjal'],
+                        'Pichincha': ['Quito', 'Sangolquí', 'Machachi', 'Cayambe', 'Tabacundo'],
+                        'Azuay': ['Cuenca', 'Gualaceo', 'Paute', 'Chordeleg'],
+                        'Manabí': ['Manta', 'Portoviejo', 'Chone', 'Montecristi', 'Jipijapa', 'Bahía de Caráquez'],
+                        'Tungurahua': ['Ambato', 'Baños', 'Pelileo'],
+                        'Santo Domingo de los Tsáchilas': ['Santo Domingo'],
+                        'El Oro': ['Machala', 'Pasaje', 'Santa Rosa', 'Huaquillas'],
+                        'Loja': ['Loja', 'Catamayo', 'Cariamanga'],
+                        'Imbabura': ['Ibarra', 'Otavalo', 'Cotacachi'],
+                        'Chimborazo': ['Riobamba', 'Guano', 'Alausí'],
+                        'Cotopaxi': ['Latacunga', 'Salcedo', 'Pujilí'],
+                        'Esmeraldas': ['Esmeraldas', 'Atacames', 'Quinindé'],
+                        'Los Ríos': ['Quevedo', 'Babahoyo', 'Vinces', 'Buena Fe'],
+                        'Santa Elena': ['Santa Elena', 'Salinas', 'La Libertad'],
+                        'Bolívar': ['Guaranda', 'San Miguel'],
+                        'Cañar': ['Azogues', 'La Troncal'],
+                        'Carchi': ['Tulcán', 'Bolívar'],
+                        'Galápagos': ['Puerto Ayora', 'Puerto Baquerizo Moreno'],
+                        'Morona Santiago': ['Macas', 'Gualaquiza'],
+                        'Napo': ['Tena', 'Archidona'],
+                        'Orellana': ['El Coca'],
+                        'Pastaza': ['Puyo'],
+                        'Sucumbíos': ['Nueva Loja (Lago Agrio)', 'Shushufindi'],
+                        'Zamora Chinchipe': ['Zamora', 'Yantzaza']
+                    },
+                    currentTestimonial: 0,
+                    showFomo: false,
+                    currentSale: 0,
+                    recentSales: [
+                        { name: 'Juan de Manta', location: 'Manta', ref: '10/10' },
+                        { name: 'Carlos de Quito', location: 'Quito', ref: 'Excelente calidad' },
+                        { name: 'Andrea de GYE', location: 'Guayaquil', ref: 'Muy recomendados' },
+                        { name: 'Luis de Cuenca', location: 'Cuenca', ref: 'Envío rápido' },
+                        { name: 'Elena de Ambato', location: 'Ambato', ref: 'Diseño único' }
+                    ],
+                    brand: {
+                        name: 'House Wild',
+                        whatsappUrl: 'https://wa.me/593985932083',
+                        socials: [
+                            { icon: 'fab fa-instagram', url: 'https://www.instagram.com/housewildec/' },
+                            { icon: 'fab fa-tiktok', url: 'https://www.tiktok.com/@housewild' },
+                            { icon: 'fab fa-facebook', url: '#' }
+                        ]
+                    },
+                    hero: {
+                        badge: 'Top Seller 2025',
+                        title: 'WILD STEALTH <br><span class="text-green-500">BLACK EDITION</span>',
+                        description: 'La máxima expresión del calzado táctico urbano. Diseñadas para resistir cualquier terreno con un estilo imponente y sigiloso. El modelo más buscado en Ecuador ya está aquí.',
+                        ctaText: 'Comprar por WhatsApp',
+                        image: 'https://images.unsplash.com/photo-1524532700868-d7d0c30511fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+                        imageAlt: 'Wild Stealth Black Showcase',
+                        floatingBadge: 'Top Seller',
+                        features: [
+                            { icon: 'fas fa-truck', text: 'Envíos Express Ecuador' },
+                            { icon: 'fas fa-shield-alt', text: 'Materiales Reforzados' }
+                        ]
+                    },
+                    products: [
+                        {
+                            id: 1,
+                            name: 'Wild Stealth Black',
+                            price: 89.00,
+                            image: 'https://images.unsplash.com/photo-1524532700868-d7d0c30511fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'El modelo insignia. Construcción ultra-resistente en negro mate con suela de tracción superior.',
+                            isNew: true
+                        },
+                        {
+                            id: 2,
+                            name: 'Desert Storm',
+                            price: 95.00,
+                            image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Tonos arena para aventuras extremas. Estabilidad y confort en cada paso.',
+                            isNew: false
+                        },
+                        {
+                            id: 3,
+                            name: 'Desert Storm Boot',
+                            price: 115.00,
+                            image: 'https://images.unsplash.com/photo-1511556820780-d912e42b4980?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Corte alto para protección total. El calzado definitivo para el explorador moderno.',
+                            isNew: true
+                        },
+                        {
+                            id: 4,
+                            name: 'Jungle Commando',
+                            price: 92.00,
+                            image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Versatilidad táctica con un diseño optimizado para climas húmedos y terrenos difíciles.',
+                            isNew: false
+                        },
+                        {
+                            id: 5,
+                            name: 'Street Viper',
+                            price: 79.00,
+                            image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Velocidad y agilidad. El calzado ligero preferido por la comunidad urbana.',
+                            isNew: true
+                        },
+                        {
+                            id: 6,
+                            name: 'Urban Phantom',
+                            price: 88.00,
+                            image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                            description: 'Minimalismo funcional. La mezcla perfecta entre discreción y alto rendimiento.',
+                            isNew: false
+                        }
+                    ],
+                    stats: [
+                        { value: '10k+', label: 'Seguidores' },
+                        { value: '5000+', label: 'Clientes Felices' },
+                        { value: '24/7', label: 'Soporte' },
+                        { value: '24h', label: 'Envío promedio' }
+                    ],
+                    featuresContent: {
+                        title: '¿Por qué elegir House Wild?',
+                        subtitle: 'Fusionamos diseño de vanguardia con materiales de alta resistencia para el estilo de vida ecuatoriano.'
+                    },
+                    features: [
+                        {
+                            icon: 'fas fa-medal',
+                            title: 'Acabados Premium',
+                            description: 'Cada par es revisado minuciosamente para garantizar que recibas solo lo mejor en materiales y costuras.'
+                        },
+                        {
+                            icon: 'fas fa-walking',
+                            title: 'Confort Superior',
+                            description: 'Plantillas ergonómicas diseñadas para brindarte comodidad durante todo el día, sin importar tu actividad.'
+                        },
+                        {
+                            icon: 'fas fa-rocket',
+                            title: 'Tendencia Global',
+                            description: 'Diseños inspirados en las últimas tendencias internacionales, adaptados al espíritu salvaje de nuestra marca.'
+                        }
+                    ],
+                    testimonials: [
+                        { name: 'Juan de Manta', location: 'Manta', text: 'Me gusta la calidad 10 de 10. Respondieron súper rápido y el envío fue puntual.' },
+                        { name: 'Carlos M.', location: 'Quito', text: 'La calidad es impresionante. Los pedí y me llegaron al día siguiente. Súper cómodos.' },
+                        { name: 'Andrea P.', location: 'Guayaquil', text: 'Me encantan los diseños, son súper originales. En persona se ven incluso mejor que en fotos.' },
+                        { name: 'Mateo R.', location: 'Ambato', text: 'El diseño táctico es justo lo que buscaba. Muy resistentes para el uso diario.' },
+                        { name: 'Lucía V.', location: 'Loja', text: 'Increíble experiencia de compra. La atención por WhatsApp fue muy personalizada.' }
+                    ]
+                }
+            },
+            computed: {
+                totalPrice() {
+                    if (!this.selectedProduct) return '0.00';
+                    return (this.selectedProduct.price * this.form.quantity).toFixed(2);
+                },
+                availableCities() {
+                    if (!this.form.provincia) return [];
+                    return this.provinciaCities[this.form.provincia] || [];
+                }
+            },
+            methods: {
+                openOrderModal(product) {
+                    this.selectedProduct = product;
+                    this.isModalOpen = true;
+                    document.body.style.overflow = 'hidden';
+                },
+                closeModal() {
+                    this.isModalOpen = false;
+                    this.isOrderSuccess = false;
+                    this.whatsappBackupUrl = '';
+                    this.form.quantity = 1;
+                    this.form.name = '';
+                    this.form.id = '';
+                    this.form.address = '';
+                    this.form.phone = '';
+                    this.form.provincia = '';
+                    this.form.ciudad = '';
+                    if (this.form.hasOwnProperty('customCiudad')) {
+                        this.form.customCiudad = '';
+                    }
+                    this.errors = {
+                        name: '',
+                        id: '',
+                        address: '',
+                        phone: '',
+                        provincia: '',
+                        ciudad: ''
+                    };
+                    document.body.style.overflow = 'auto';
+                },
+                validateCedulaEcuatoriana(cedula) {
+                    if (cedula.length !== 10) return false;
+                    const provincia = parseInt(cedula.substring(0, 2), 10);
+                    if (provincia < 1 || provincia > 24) return false;
+                    const tercerDigito = parseInt(cedula.substring(2, 3), 10);
+                    if (tercerDigito < 0 || tercerDigito > 5) return false;
+
+                    const coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+                    let suma = 0;
+                    for (let i = 0; i < 9; i++) {
+                        let valor = parseInt(cedula.charAt(i), 10) * coeficientes[i];
+                        if (valor >= 10) valor -= 9;
+                        suma += valor;
+                    }
+                    const verificador = parseInt(cedula.substring(9, 10), 10);
+                    const decenaSuperior = Math.ceil(suma / 10) * 10;
+                    let resultado = decenaSuperior - suma;
+                    if (resultado === 10) resultado = 0;
+                    return resultado === verificador;
+                },
+                submitOrder() {
+                    // Reset errors
+                    this.errors = {
+                        name: '',
+                        id: '',
+                        address: '',
+                        phone: '',
+                        provincia: '',
+                        ciudad: ''
+                    };
+                    let hasErrors = false;
+
+                    // 1. Name Validation
+                    if (!this.form.name.trim()) {
+                        this.errors.name = 'El nombre es obligatorio';
+                        hasErrors = true;
+                    }
+
+                    // 2. ID (Cédula / RUC) Validation
+                    const idCleaned = this.form.id.trim().replace(/\s+/g, '');
+                    if (!/^\d+$/.test(idCleaned)) {
+                        this.errors.id = 'La identificación debe contener solo números';
+                        hasErrors = true;
+                    } else if (idCleaned.length === 10) {
+                        if (!this.validateCedulaEcuatoriana(idCleaned)) {
+                            this.errors.id = 'Cédula ecuatoriana inválida (error de dígito verificador)';
+                            hasErrors = true;
+                        }
+                    } else if (idCleaned.length === 13) {
+                        // Check natural person RUC
+                        const cedulaPart = idCleaned.substring(0, 10);
+                        const rucSuffix = idCleaned.substring(10, 13);
+                        if (rucSuffix === '000') {
+                            this.errors.id = 'RUC inválido (no puede terminar en 000)';
+                            hasErrors = true;
+                        } else if (!this.validateCedulaEcuatoriana(cedulaPart) && idCleaned.charAt(2) < '6') {
+                            this.errors.id = 'RUC de persona natural inválido';
+                            hasErrors = true;
+                        }
+                    } else {
+                        this.errors.id = 'La identificación debe tener exactamente 10 dígitos (Cédula) o 13 dígitos (RUC)';
+                        hasErrors = true;
+                    }
+
+                    // 3. Phone (WhatsApp) Validation
+                    let phoneCleaned = this.form.phone.trim().replace(/\s+/g, '');
+                    if (phoneCleaned.startsWith('+')) phoneCleaned = phoneCleaned.substring(1);
+                    if (phoneCleaned.startsWith('593')) phoneCleaned = '0' + phoneCleaned.substring(3);
+                    if (phoneCleaned.length === 9 && phoneCleaned.startsWith('9')) phoneCleaned = '0' + phoneCleaned;
+
+                    if (!/^09\d{8}$/.test(phoneCleaned)) {
+                        this.errors.phone = 'Número inválido (debe tener 10 dígitos e iniciar con 09)';
+                        hasErrors = true;
+                    } else {
+                        this.form.phone = phoneCleaned;
+                    }
+
+                    // 4. Provincia Validation
+                    if (!this.form.provincia) {
+                        this.errors.provincia = 'Seleccione una provincia';
+                        hasErrors = true;
+                    }
+
+                    // 5. Ciudad Validation
+                    if (!this.form.ciudad) {
+                        this.errors.ciudad = 'Seleccione una ciudad';
+                        hasErrors = true;
+                    } else if (this.form.ciudad === 'Otra' && (!this.form.customCiudad || !this.form.customCiudad.trim())) {
+                        this.errors.ciudad = 'Escriba el nombre de su ciudad';
+                        hasErrors = true;
+                    }
+
+                    // 6. Address Validation
+                    if (!this.form.address.trim()) {
+                        this.errors.address = 'La dirección exacta es obligatoria';
+                        hasErrors = true;
+                    }
+
+                    if (hasErrors) {
+                        return;
+                    }
+
+                    // Format message
+                    const ciudadFinal = this.form.ciudad === 'Otra' ? this.form.customCiudad : this.form.ciudad;
+                    const message = `*NUEVO PEDIDO - HOUSE WILD ECUADOR*\n\n` +
+                                   `*DETALLES DEL PRODUCTO*\n` +
+                                   `• *Producto:* ${this.selectedProduct.name}\n` +
+                                   `• *Talla:* ${this.form.size}\n` +
+                                   `• *Cantidad:* ${this.form.quantity} par${this.form.quantity > 1 ? 'es' : ''}\n` +
+                                   `• *Precio Unitario:* $${this.selectedProduct.price.toFixed(2)}\n` +
+                                   `• *Total a Pagar:* $${this.totalPrice}\n` +
+                                   `• *Método de Pago:* ${this.form.payment}\n\n` +
+                                   `*DATOS DE ENVÍO Y FACTURACIÓN*\n` +
+                                   `• *Nombre:* ${this.form.name.trim()}\n` +
+                                   `• *Cédula/RUC:* ${idCleaned}\n` +
+                                   `• *Provincia:* ${this.form.provincia}\n` +
+                                   `• *Ciudad:* ${ciudadFinal.trim()}\n` +
+                                   `• *Dirección:* ${this.form.address.trim()}\n` +
+                                   `• *Teléfono:* ${this.form.phone}`;
+
+                    const encoded = encodeURIComponent(message);
+                    const whatsappUrl = `https://wa.me/593985932083?text=${encoded}`;
+                    this.whatsappBackupUrl = whatsappUrl;
+                    this.isOrderSuccess = true;
+
+                    window.open(whatsappUrl, '_blank');
+                }
+            },
+            mounted() {
+                AOS.init({
+                    duration: 1000,
+                    once: true,
+                    offset: 100
+                });
+
+                // Auto-rotate testimonials every 3 seconds
+                setInterval(() => {
+                    this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+                }, 3000);
+
+                // Auto-rotate FOMO popup every 5 seconds (displaying for 3s, hiding for 2s)
+                setInterval(() => {
+                    this.currentSale = (this.currentSale + 1) % this.recentSales.length;
+                    this.showFomo = true;
+                    setTimeout(() => {
+                        this.showFomo = false;
+                    }, 3000);
+                }, 5000);
+
+                // Show first FOMO after 2 seconds
+                setTimeout(() => {
+                    this.showFomo = true;
+                }, 2000);
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
